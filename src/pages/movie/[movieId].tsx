@@ -62,10 +62,13 @@ export default function Page({ movieId }: ParamsTypes) {
         return false;
       }
       const data = await response.json();
-      setGetMovieDetailState({
-        data: data,
-        isLoading: false,
-      });
+      setTimeout(() => {
+        setGetMovieDetailState({
+          data: data,
+          isLoading: false,
+        });
+      }, 1500)
+      
     } catch (error) {
       setGetMovieDetailState({
         isError: true,

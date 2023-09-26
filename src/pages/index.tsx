@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef } from 'react';
+import { useReducer, useState, useEffect, Fragment, useRef } from 'react';
 import Link from 'next/link';
 import { GetMoviePopularPerPageReturnType } from '@/services/tmdb/movie/popular/get-movie-popular-per-page';
 import { MoviesSkeleton } from '@/shared/movies-skeleton';
@@ -13,11 +13,23 @@ export default function Page() {
   const { height } = useWindowSize();
   const { y } = useWindowScroll();
 
-  const [pageLimiter, setPageLimiter] = useState({
-    dataFetching: false,
-    dataFetchingError: false,
-    nextPage: 1,
-  });
+  interface PageLimiterStateType {
+    dataFetching: boolean;
+    dataFetchingError: boolean;
+    nextPage: number;
+  }
+
+  const [pageLimiter, setPageLimiter] = useReducer(
+    (state: PageLimiterStateType, newState: Partial<PageLimiterStateType>) => ({
+      ...state,
+      ...newState,
+    }),
+    {
+      dataFetching: false,
+      dataFetchingError: false,
+      nextPage: 1,
+    }
+  );
 
   const [getMoviePopularPerPageState, setGetMoviePopularPerPage] = useState<
     GetMoviePopularPerPageReturnType[]
@@ -26,7 +38,6 @@ export default function Page() {
   const fetchMoviePopularPerPage = async () => {
     try {
       setPageLimiter({
-        ...pageLimiter,
         dataFetching: true,
         dataFetchingError: false,
       });
@@ -35,22 +46,21 @@ export default function Page() {
       );
       if (response.status !== 200) {
         setPageLimiter({
-          ...pageLimiter,
           dataFetchingError: true,
           dataFetching: false,
         });
         return false;
       }
       const data = await response.json();
-      setGetMoviePopularPerPage([...getMoviePopularPerPageState, data]);
-      setPageLimiter({
-        ...pageLimiter,
-        nextPage: pageLimiter.nextPage + 1,
-        dataFetching: false,
-      });
+      setTimeout(() => {
+        setGetMoviePopularPerPage([...getMoviePopularPerPageState, data]);
+        setPageLimiter({
+          nextPage: pageLimiter.nextPage + 1,
+          dataFetching: false,
+        });
+      }, 1500);
     } catch (error) {
       setPageLimiter({
-        ...pageLimiter,
         dataFetchingError: true,
         dataFetching: false,
       });
