@@ -64,7 +64,6 @@ export default function Page() {
 
   useEffect(() => {
     (async () => {
-      console.log(y + height + 200 >= document.body.scrollHeight);
       if (
         y + height + 200 >= document.body.scrollHeight &&
         !onScrollFetching.current
