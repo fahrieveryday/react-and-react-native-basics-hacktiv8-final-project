@@ -67,8 +67,7 @@ export default function Page({ movieId }: ParamsTypes) {
           data: data,
           isLoading: false,
         });
-      }, 1500)
-      
+      }, 1500);
     } catch (error) {
       setGetMovieDetailState({
         isError: true,
